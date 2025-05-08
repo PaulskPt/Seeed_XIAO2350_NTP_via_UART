@@ -1,0 +1,72 @@
+
+Thursday 2025-05-08 11h42 utc
+
+--------------------------------------
+Sending device (Pimoroni Pico Plus 2):
+--------------------------------------
+
+Board: Pimoroni Pico Plus 2:
+
+Serial output (Desktop PC, COM4 - via PuTTY)
+
+main(): unixtime send interval = 1 minutes
+Waiting for connection...
+wlan connected to: "<SSID>"
+IP address = "192.168.<N>.<NNN>"
+
+
+datetime from NTP server = Thu 2025-05-08T11:42:00Z yday 128
+unixtime 1746704520, tx_buf = b'h\x1c\x98\x88', list(tx_buf) = [104, 28, 152, 136] sent via UART
+
+datetime from NTP server = Thu 2025-05-08T11:43:01Z yday 128
+unixtime 1746704581, tx_buf = b'h\x1c\x98\xc5', list(tx_buf) = [104, 28, 152, 197] sent via UART
+
+datetime from NTP server = Thu 2025-05-08T11:44:02Z yday 128
+unixtime 1746704642, tx_buf = b'h\x1c\x99\x02', list(tx_buf) = [104, 28, 153, 2]  sent via UART
+
+
+-------------------------------
+Receiving device (XIAO RP2350):
+-------------------------------
+
+Board: Seeed XIAO RP2350 mounted on top of a Seeed Expansion Base
+
+Shell output of Thonny IDE (on Desktop PC, COM3):
+
+> %Run -c $EDITOR_CONTENT
+
+MPY: soft reboot
+SDCard mounted
+TIMEZONE_OFFSET = 1
+
+Waiting to receive unixtime from Pimoroni Pico Plus 2
+unixtime data received via UART
+bme280.values = ('24.29C', '715.58hPa', '79.33%')
+date    = 2025-05-08
+time    = 12:42:01
+weekday = Thu
+yearday = 128
+Thu 2025-05-08 12:42:01 Temp: 24.29C
+
+Waiting to receive unixtime from Pimoroni Pico Plus 2
+unixtime data received via UART
+bme280.values = ('22.74C', '1000.75hPa', '41.03%')
+date    = 2025-05-08
+time    = 12:43:02
+weekday = Thu
+yearday = 128
+Thu 2025-05-08 12:43:02 Press:1000.75hPa
+
+Waiting to receive unixtime from Pimoroni Pico Plus 2
+unixtime data received via UART
+bme280.values = ('22.78C', '1000.77hPa', '40.88%')
+date    = 2025-05-08
+time    = 12:44:03
+weekday = Thu
+yearday = 128
+Thu 2025-05-08 12:44:03 Hum: 40.88%
+
+
+
+
+
