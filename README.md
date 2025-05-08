@@ -101,7 +101,7 @@ With Micropython it is common that at reset a device will run in this order:
     2) main.py
 ```
 
-My experience with the XIAO RP2350 on top of the Seeed Expansion Board Base, at a reset will run ```boot.py```, however it does not run ```main.py```.
+My experience with the XIAO RP2350 on top of the Seeed Expansion Board Base, at a reset will run ```boot.py```, however it does not run automatically ```main.py```.
 I am investigating the cause of this anomaly behaviour.
 
 
