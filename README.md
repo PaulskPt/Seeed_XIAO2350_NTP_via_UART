@@ -1,6 +1,7 @@
-# Seeed XIAO RP2350 NTP via UART:
+# Seeed XIAO RP2350 NTP via UART
 
-PURPOSE OF THIS REPO:
+# PURPOSE OF THIS REPO:
+
 Receiving an NTP datetime serial (unixtime) by one device (Pimoroni Pico Plus 2 with external Pimoroni RM2 Module)
 and sending this unixtime to a second device (Seeed XIAO RP2350 mounted on top of a Seed Expansion Board Base)
 
@@ -31,6 +32,9 @@ The folder ```src/XIAO_RP2350``` contains the following subfolders with file(s):
             ssd1306.py
 ```
 
+Because the XIAO RP2350 has limited memory. Library modules are saved on an SD-Card. 
+However in the memory of the XIAO RP2350 I created a folder ```lib```. In it I saved the file ```sdcard.py```.
+This is called by ```boot.py``` mount an SD-Card. An SD-Card is necessary (see explanation below).
 
 The current setting of  in file ```secrets.py``` is set for the time zone of Europe/Lisbon
 which is GMT +1.
@@ -86,6 +90,9 @@ The following data will be displayed:
 The serial communication between the transmitting device and the receiving device is set for a speed of 9600 bits-per-second.
 The unixtime will be packed before transmission. After reception the unixtime will be unpacked.
 
+
+# MORE PRINT OUTPUT
+Each ```main.py``` has in the global variables secion a variable ```my_debug```. If you set this to ```True```, the script will print more information to the serial monitor output.
 
 # KNOWN ISSUES:
 With Micropython it is common that at reset a device will run in this order:
