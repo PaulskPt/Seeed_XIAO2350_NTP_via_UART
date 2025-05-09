@@ -1,8 +1,8 @@
 #
-# 2025-05-08 main.py
+# script for the Pimoroni pico plus 2 with connected a Pimoroni RM2 WiFi/BT module
+# at intervals sending ntp unixtime via UART to another device (XIAO RP2350 on top of a Seed Expansion Board Base)
+# 2025-05-09
 # by Paulus Schulinck (Github handle: @PaulskPt)
-# for the Pimoroni pico plus 2 with connected a Pimoroni RM2 WiFi/BT module
-# sending ntp unixtime via UART to another device (XIAO RP2350 on top of a Seed Expansion Board Base)
 # License: MIT
 import network
 import ntptime
@@ -46,6 +46,8 @@ def do_connect():
         wlan.connect(SSID, PASSWORD)
     except OSError as error:
         print(f'error is {error}')
+    except Exception as exc:
+        print(f'other excption error is {exc}')
 
     msg_shown = False
     stop = False
@@ -56,7 +58,7 @@ def do_connect():
             print('Waiting for connection...')
         try_cnt += 1
         if try_cnt > 10:
-            print(f"WiF connection failed.")
+            print(f"WiFi connection failed.")
             wlan.active(False)
             stop = True
             break
@@ -104,7 +106,7 @@ def handle_ntp():
         local_time[yd]
     )
 
-    print("datetime from NTP server = {}".format(datetimeStr), end='\n')
+    print("\ndatetime from NTP server = {}".format(datetimeStr), end='\n')
     #datetimeStr = "2024-12-10T00:31:18Z"
     
 def send_unix():
@@ -116,7 +118,7 @@ def send_unix():
         # 1714936871 dec = 6637 DC37 hex = 0110 0110 0011 0111 1101 1100 0010 0111 = 8 bytes = 32bits
 
         # Convert to bytearray (4 non-packed bytes for a 32-bit integer, 8 non-packed bytes for a 64-bit integer)
-        tx_buf = struct.pack(">L", unixtime)  # Use 'L' for a 32-bit (unsigned long int)
+        tx_buf = struct.pack(">L", unixtime)  # Use 'Q' for a 64-bit integer (was ">Q" and before that: ">I")
 
         uart.write(tx_buf)
         print(f"unixtime {unixtime}, tx_buf = {tx_buf}, list(tx_buf) = {list(tx_buf)} sent via UART")
