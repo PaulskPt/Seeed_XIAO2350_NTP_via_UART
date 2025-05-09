@@ -7,11 +7,18 @@
 # License: MIT
 # Note: script uses modules in /sd/lib. The script in boot.py tries to mount the SDCard
 #
-my_debug = False
+import struct
+import array, random
+from machine import Pin, UART
+import rp2
+import time
+import utime
+import os
+
 use_bme280 = True
 use_mcp9808 = False
+my_debug = False
 
-import os
 try:
     os.chdir('/sd')
 
@@ -31,17 +38,6 @@ try:
 except OSError as exc:
     print(f"Error: {exc}")
     raise
-
-import struct
-import array, random
-from machine import Pin
-import rp2
-
-from machine import UART
-
-import time
-import utime
-
 
 PIN_WIRE1_SCL = machine.Pin.board.GP7
 PIN_WIRE1_SDA = machine.Pin.board.GP6
@@ -98,6 +94,7 @@ POWER_PIN = 23  # PICO_DEFAULT_WS2812_POWER_PIN
 BRIGHTNESS = 0.1
 
 @rp2.asm_pio(sideset_init=rp2.PIO.OUT_LOW, out_shiftdir=rp2.PIO.SHIFT_LEFT, autopull=True, pull_thresh=24)
+
 def ws2812():
     T1 = 2
     T2 = 5
@@ -134,22 +131,6 @@ def set_led_color(color):
 
 #--- end of setup for RGB Led ---
 
-
-# [2026, 5, 4, 6, 18, 20, 40]
-
-def unix_to_rtc():
-    global unixtime, tz_offset, local_time_lst, weekdayStr, yearday
-    if unixtime > 0:
-        #                                   (yy, mo, dd, hh, mm, ss, wd, yd)
-        # example of time.localtime result: (2025, 5, 5, 18, 26, 38, 0, 125) 
-        lt = time.gmtime(unixtime + (tz_offset * 3600) )
-        #              yy    mo     dd     wd     hh     mm     ss
-        local_time_lst = [lt[0], lt[1], lt[2], lt[6], lt[3], lt[4], lt[5]]
-        #weekdayStr = wdDict[lt[2]]
-        #yearday = lt[7]
-        rtc.DateTime(local_time_lst)
-        print(f"rtc updated from ntp: {rtc.DateTime}")
-        
 
 def update_fm_ntp():
     global unixtime, weekdayStr, yearday
@@ -221,45 +202,6 @@ def update_fm_ntp():
         ret = True
 
     return ret
-
-def pr_dt():
-    global dt
-    TAG = "pr_dt(): "
-    if isinstance(dt, tuple) and len(dt) == 8:
-        print("datetime received from NTP server: ", end = '\n')
-        # print(f"weekday = {dt[6]}", end = '')
-        if dt[6] in wdDict.keys():
-            wday = wdDict[dt[6]]
-        else:
-            wday = str(dt[6])
-        if int(TIMEZONE_OFFSET) >= 0: # in case timezone(s) UTC or EAST of UTC
-            n = TIMEZONE_OFFSET.find('+')
-            if n == -1: # not found
-                tz = "+" + TIMEZONE_OFFSET
-            else:
-                tz = TIMEZONE_OFFSET
-        else: # in case timezone(s) WEST of UTC
-            n = TIMEZONE_OFFSET.find('-')
-            if n == -1: # not found
-                tz = "-" + TIMEZONE_OFFSET
-            else:
-                tz = TIMEZONE_OFFSET
-
-    
-        print("{:4d}-{:02d}-{:02d} T {:02d}:{:02d}:{:02d}, {:s}, yearday: {:3d}, timezone: UTC{:s}".format( \
-            dt[0], dt[1], dt[2], dt[3], dt[4], dt[5],  wday, dt[7], tz))
-        #   year, month, day, hours, minutes, seconds, wday, yearday))
-    else:
-        print(TAG + f"expected global variable dt being a tuple,\n\thowever received a type \"{type(dt)}\". Check your code!")
-
-def disp_date():
-    tm = time.localtime()
-    year, month, day, _, _, _, _, _ = tm
-    m = monthsLst[month]
-    t = "{:02d} {:s} {:04d}".format(day, m, year)
-    
-    oled.fill(0)
-    oled.text(t, 75, VERT_MIDDLE+80) # was: -30
 
 def weekday():
     dt = rtc.DateTime()
