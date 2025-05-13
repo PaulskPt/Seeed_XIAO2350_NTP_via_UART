@@ -108,6 +108,6 @@ The XIAO RP2350 that I use works only with this version of Micropython: ```RPI_P
 I tried the latest from Micropython.org/Download: ```v1.25.0 (2025-04-15) .uf2``` and its RISC-V CPU mode. None of them did boot.
 
 Update: 2025-05-13:
-Some small changes in the start of main.py for the XIAO RP2350 solved the problem I experienced with main.py no autostart after boot or a reset.
+Some small changes in the start of main.py for the XIAO RP2350 solved the problem I experienced with main.py not autostart after boot or a reset.
 
 
