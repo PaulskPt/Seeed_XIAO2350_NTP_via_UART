@@ -245,17 +245,20 @@ def dtToStr():
         loctime[4], loctime[5], loctime[6])
 
 def intro_msg():
-    oled.fill(0)
-    oled.text("XIAO RP2350",  0,  0)
-    oled.text("Waiting to", 0, 10)
-    oled.text("receive unixtime", 0, 20)
-    oled.show()
-    time.sleep(3)
-    oled.fill(0)
-    oled.text("from", 0, 0)
-    oled.text("Pimoroni", 0, 10)
-    oled.text("Pico Plus 2", 0, 20)
-    oled.show()
+    txt_lst = ["XIAO RP2350", "Waiting to", "receive unixtime", "from", "Pimoroni", "Pico Plus 2"]
+    vPos = 0
+    for _ in range(len(txt_lst)):
+        if _ == 0 or _ == 3:
+            oled.fill(0)
+            vPos = 0
+        
+        oled.text(txt_lst[_], 0, vPos)
+        if _ == 2 or _ == 5:
+            oled.show()
+        vPos += 10
+
+        if _ == 3:
+            time.sleep(3)
 
 def main():
     if use_bme280:
