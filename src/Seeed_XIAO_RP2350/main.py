@@ -157,70 +157,57 @@ def set_led_color(color):
 #--- end of setup for RGB Led ---
 
 
-def update_fm_ntp():
+def handle_rx_buf(rx_buf):
     global unixtime, weekdayStr, yearday
     t1 = "Unable to get time from NTP server.\n\nCheck your network and try again."
-    TAG = "update_fm_ntp(): "
+    TAG = "handle_rx_buf(): "
     ret = False
-    
-    # Try to receive unixtime via UART from Pimoroni Pico Plus 2 (with RM2 WiFi/BT module connected)
-    if not my_debug:
-        print("\nWaiting to receive unixtime from Pimoroni Pico Plus 2")
-    ux_val = None
-    try_cnt = 0
-    try_cnt_max = 100
-    buflen = 10
-    while True:
-        rx_buf = bytearray(buflen) # create a clean buffer
-        rx_buf = uart.read()
-        # print(f"type(rx_buf) = {type(rx_buf)}")
-        if isinstance(rx_buf, bytes):
-            set_led_color(GREEN)
-            print("unixtime data received via UART")
-            # print(f"rx_buf = {rx_buf}, list(rx_buf) = {list(rx_buf)}")
-            try:
-                for i in range(3, 0, -1):
-                    if rx_buf[i] == 0:
-                        break
-            except IndexError: # occurred when something erratically occurred,
-                #                for instance that the other device was reset.
-                continue
-            if i > 0:
-                if my_debug:
-                    print(f"nr of bytes (with a value > 0) = {i}")
-                # Convert bytearray back to integer
-                ux_val = struct.unpack(">L", rx_buf)[0]  # 'L' is for a 32-bit integer (unsigned long)
-                if my_debug:
-                    print(f"rx_buf = {rx_buf}, ux_val = {ux_val}")
-                if ux_val > 0:
+    line = 67 * '-'
+    # Handle the received unixtime
+    ux_val = 0
+
+    if isinstance(rx_buf, bytes):
+        set_led_color(GREEN)
+        print(line)
+        print(TAG + "unixtime data received via UART")
+        # print(f"rx_buf = {rx_buf}, list(rx_buf) = {list(rx_buf)}")
+        try:
+            for i in range(3, 0, -1):
+                if rx_buf[i] == 0:
                     break
-                else:
-                    try_cnt += 1
-                    if my_debug:
-                        print(f"try_cnt = {try_cnt}")
-                    if try_cnt >= try_cnt_max:
-                        print("receive of unixtime timed out")
-                        break
+        except IndexError: # occurred when something erratically occurred,
+            #                for instance that the other device was reset.
+            return ret
+        if i > 0:
+            if my_debug:
+                print(TAG + f"nr of bytes (with a value > 0) = {i}")
+            # Convert bytearray back to integer
+            ux_val = struct.unpack(">L", rx_buf)[0]  # 'L' is for a 32-bit integer (unsigned long)
+            if my_debug:
+                print(TAG + f"rx_buf = {rx_buf}, ux_val = {ux_val}")
+            if ux_val <= 0:
+                return ret
+                
         time.sleep(0.01)
     if ux_val > 0:
         unixtime = ux_val + (tz_offset * 3600)
         if my_debug:
-            print(f"ux_val = {ux_val}, unixtime (+ timezone offset) = {unixtime}")
+            print(TAG + f"ux_val = {ux_val}, unixtime (+ timezone offset) = {unixtime}")
         #unix_to_rtc()
         gmtTime = utime.localtime(ux_val)
         loctime = utime.localtime(unixtime)
         if my_debug:
-            print(f"gmtTime = {gmtTime}")
-            print(f"loctime = {loctime}")
+            print(TAG + f"gmtTime = {gmtTime}")
+            print(TAG + f"loctime = {loctime}")
         upd_time = ( loctime[0], loctime[1], loctime[2],
                      loctime[6],
                      loctime[3], loctime[4], loctime[5])
         weekdayStr = wdDict[loctime[6]]
         yearday = loctime[7]
         rtc.DateTime(upd_time)
-        if my_debug:
-            print(f"rtc updated from ntp: {rtc.DateTime()}")
-        
+        if not my_debug:
+            print(TAG + f"rtc updated from ntp: {rtc.DateTime()}")
+        print(line)
         time.sleep(1) # leave the RGB Led on for a while!
         set_led_color(BLACK)
         
@@ -239,36 +226,42 @@ def weekday():
  
 def dtToStr():
     loctime = rtc.DateTime()
+    if not my_debug:
+        print(f"dtToStr(): rtc.DateTime() = {loctime}")
     return "{:s} {:4d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
         wdDict[loctime[3]],
         loctime[0], loctime[1], loctime[2],
         loctime[4], loctime[5], loctime[6])
 
 def intro_msg():
-    txt_lst = ["XIAO RP2350", "Waiting to", "receive unixtime", "from", "Pimoroni", "Pico Plus 2"]
-    vPos = 0
-    for _ in range(len(txt_lst)):
-        if _ == 0 or _ == 3:
-            oled.fill(0)
-            vPos = 0
-        
-        oled.text(txt_lst[_], 0, vPos)
-        if _ == 2 or _ == 5:
-            oled.show()
-        vPos += 10
-
-        if _ == 3:
-            time.sleep(3)
+    oled.fill(0)
+    oled.text("XIAO RP2350", 0, 0)
+    oled.text("Waiting to", 0, 10)
+    oled.text("receive unixtime", 0, 20)
+    oled.show()
+    time.sleep(3)
+    oled.fill(0)
+    oled.text("from", 0, 0)
+    oled.text("Pimoroni", 0, 10)
+    oled.text("Pico Plus 2", 0, 20)
+    oled.show()
 
 def main():
+    buflen = 10
     if use_bme280:
         bme_val_idx = 0
 
+    show_keep_cnt = 0
+    show_keep_max = 4
     intro_msg()
+    t2 = ""
     while True:
-        t = ""
         try:
-            update_fm_ntp()
+            rx_buf = bytearray(buflen) # create a clean buffer
+            rx_buf = uart.read()
+            # print(f"type(rx_buf) = {type(rx_buf)}")
+            if isinstance(rx_buf, bytes):
+                handle_rx_buf(rx_buf)
             if use_mcp9808:
                 tempC = sensor.get_temp()
                 if isinstance(tempC, float):
@@ -279,13 +272,18 @@ def main():
                     print(f"bme280.values = {v}")
                     # example: bme280.values = ('22.40C', '1000.68hPa', '43.85%')
 
+  
+                t = ""
                 if bme_val_idx == 0:
                     t = "Temp: {:s}".format(v[0])
                 if bme_val_idx == 1:
                     t = "Press:{:s}".format(v[1])
                 if bme_val_idx == 2:
                     t = "Hum: {:s}".format(v[2])
-            
+            if show_keep_cnt == 0:
+                # leave the value the same for five iterations
+                # to keep the view less nervous
+                t2 = t
             dt = rtc.Date()
             print(f"date    = {dt}")
             tm = rtc.Time()
@@ -294,20 +292,24 @@ def main():
             print(f"yearday = {yearday}")
             print(dtToStr(), end ='')
             print(' ', end='')
-            print(t)
+            print(t2)
             
             oled.fill(0)
-            oled.text(t,  0,  0)
+            oled.text(t2,  0,  0)
             oled.text(dt, 0, 10)
             oled.text(weekday(), 0, 20)
             oled.text(tm, 30, 20)
 
             oled.show()
-            if use_bme280:
+            if use_bme280 and show_keep_cnt == 0:
                 bme_val_idx += 1
                 if bme_val_idx >=3:
                     bme_val_idx = 0
-            time.sleep(3)
+            show_keep_cnt += 1
+            if show_keep_cnt > show_keep_max:
+                show_keep_cnt = 0
+            time.sleep(1)
+            
         except OSError as exc:
             print(f"Error: {exc.args[0]}")
             
