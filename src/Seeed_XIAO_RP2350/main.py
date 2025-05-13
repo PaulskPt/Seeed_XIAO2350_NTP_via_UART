@@ -1,4 +1,15 @@
-# 
+import time
+import struct
+import array, random
+from machine import Pin, UART
+import rp2
+import utime
+import os
+
+use_bme280 = True
+use_mcp9808 = False
+my_debug = False
+ 
 # Micropython script for a Seeed XIAO RP2350 attached to a Seeed Expansion Board Base
 # Test to receive ntp unixtime from another device: Pimoroni Pico Plus 2 with RM2 module attached
 # also display/print sensor values from either mcp9808 or bme280 (see global flags below).
@@ -7,17 +18,34 @@
 # License: MIT
 # Note: script uses modules in /sd/lib. The script in boot.py tries to mount the SDCard
 #
-import struct
-import array, random
-from machine import Pin, UART
-import rp2
-import time
-import utime
-import os
+# See: https://github.com/orgs/micropython/discussions/15292
+# Post: "SOLUTION" by @wbeebe
+# UPDATE 18 June 2024
 
-use_bme280 = True
-use_mcp9808 = False
-my_debug = False
+
+"""
+   Notes PaulskPt:
+   After reading the "SOLUTION" by @wbeebe, I tried the following in Thonny Shell:
+   >>> import machine
+   >>> i0=machine.I2C(0)
+   >>> i0
+   I2C(0, freq=400000, scl=5, sda=4, timeout=50000)
+   >>> 
+   >>> i1=machine.I2C(1)
+   >>> i1
+   I2C(1, freq=100000, scl=7, sda=6, timeout=50000)
+   >>>
+   So, instead of:
+     PIN_WIRE1_SCL = machine.Pin.board.GP7
+     PIN_WIRE1_SDA = machine.Pin.board.GP6
+    i2c = machine.I2C(id=1, scl=machine.Pin(PIN_WIRE1_SCL), 
+        sda=machine.Pin(PIN_WIRE1_SDA), freq=100000)
+   I used:
+       i2c=machine.I2C(1)
+   That worked!
+"""
+
+i2c=machine.I2C(1)
 
 try:
     os.chdir('/sd')
@@ -39,9 +67,6 @@ except OSError as exc:
     print(f"Error: {exc}")
     raise
 
-PIN_WIRE1_SCL = machine.Pin.board.GP7
-PIN_WIRE1_SDA = machine.Pin.board.GP6
-i2c = machine.I2C(id=1, scl=machine.Pin(PIN_WIRE1_SCL), sda=machine.Pin(PIN_WIRE1_SDA), freq=400000)
 
 if use_mcp9808:
     sensor = MCP9808(i2c) # create an instance of the MCP9808 sensor object
@@ -219,11 +244,24 @@ def dtToStr():
         loctime[0], loctime[1], loctime[2],
         loctime[4], loctime[5], loctime[6])
 
+def intro_msg():
+    oled.fill(0)
+    oled.text("XIAO RP2350",  0,  0)
+    oled.text("Waiting to", 0, 10)
+    oled.text("receive unixtime", 0, 20)
+    oled.show()
+    time.sleep(3)
+    oled.fill(0)
+    oled.text("from", 0, 0)
+    oled.text("Pimoroni", 0, 10)
+    oled.text("Pico Plus 2", 0, 20)
+    oled.show()
 
 def main():
     if use_bme280:
         bme_val_idx = 0
 
+    intro_msg()
     while True:
         t = ""
         try:
