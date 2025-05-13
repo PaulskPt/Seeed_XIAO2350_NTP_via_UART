@@ -105,8 +105,8 @@ local_time_lst = []
 weekdayStr = ""
 yearday = 0
 #    yy, mo, dd, wd, hh, mm, ss
-dt = (25, 5, 5, 0, 18, 20, 40) # pro-forma datetime tuple
-rtc.DateTime(dt) # set the rtc
+# dt = (25, 5, 5, 0, 18, 20, 40) # pro-forma datetime tuple
+# rtc.DateTime(dt) # set the rtc
 if my_debug:
     print(rtc.DateTime())
 
