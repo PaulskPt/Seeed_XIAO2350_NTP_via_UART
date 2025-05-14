@@ -234,17 +234,25 @@ def dtToStr():
         loctime[4], loctime[5], loctime[6])
 
 def intro_msg():
+    t_lst = ["XIAO RP2350 ", "NTP unixtime ", "via UART ", "from ", "Pimoroni ", "Pico Plus 2"]
     oled.fill(0)
-    oled.text("XIAO RP2350", 0, 0)
-    oled.text("Waiting to", 0, 10)
-    oled.text("receive unixtime", 0, 20)
+    oled.text(t_lst[0], 0, 0)
+    print(t_lst[0], end='')
+    oled.text(t_lst[1], 0, 10)
+    print(t_lst[1], end='')
+    oled.text(t_lst[2], 0, 20)
+    print(t_lst[2], end='')
     oled.show()
     time.sleep(3)
     oled.fill(0)
-    oled.text("from", 0, 0)
-    oled.text("Pimoroni", 0, 10)
-    oled.text("Pico Plus 2", 0, 20)
+    oled.text(t_lst[3], 0, 0)
+    print(t_lst[3], end='')
+    oled.text(t_lst[4], 0, 10)
+    print(t_lst[4], end='')
+    oled.text(t_lst[5], 0, 20)
+    print(t_lst[5], end='\n')
     oled.show()
+    time.sleep(3)
 
 def main():
     buflen = 10
