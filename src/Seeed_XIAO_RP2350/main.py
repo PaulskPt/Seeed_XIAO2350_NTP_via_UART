@@ -177,6 +177,7 @@ def handle_rx_buf(rx_buf):
                     break
         except IndexError: # occurred when something erratically occurred,
             #                for instance that the other device was reset.
+            set_led_color(BLACK)
             return ret
         if i > 0:
             if my_debug:
@@ -186,6 +187,7 @@ def handle_rx_buf(rx_buf):
             if my_debug:
                 print(TAG + f"rx_buf = {rx_buf}, ux_val = {ux_val}")
             if ux_val <= 0:
+                set_led_color(BLACK)
                 return ret
                 
         time.sleep(0.01)
@@ -209,10 +211,10 @@ def handle_rx_buf(rx_buf):
             print(TAG + f"rtc updated from ntp: {rtc.DateTime()}")
         print(line)
         time.sleep(1) # leave the RGB Led on for a while!
-        set_led_color(BLACK)
         
         ret = True
 
+    set_led_color(BLACK)
     return ret
 
 def weekday():
@@ -277,7 +279,7 @@ def main():
             if use_bme280:
                 if not my_debug:
                     v = bme280.values
-                    print(f"bme280.values = {v}")
+                    print(f"\nbme280.values = {v}")
                     # example: bme280.values = ('22.40C', '1000.68hPa', '43.85%')
 
   
