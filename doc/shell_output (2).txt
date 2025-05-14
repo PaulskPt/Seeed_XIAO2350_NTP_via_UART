@@ -1,0 +1,91 @@
+2025-05-14 01h39 utc +1
+
+board: Seeed XIAO RP2350 on top of a Seeed Expansion Board Base
+
+IDE: Thonny
+
+Shell output:
+
+
+>>> %Run -c $EDITOR_CONTENT
+
+MPY: soft reboot
+SDCard mounted
+TIMEZONE_OFFSET = 1
+XIAO RP2350 NTP unixtime via UART from Pimoroni Pico Plus 2
+
+bme280.values = ('24.41C', '1004.14hPa', '41.29%')
+date    = 2025-05-14
+time    = 01:39:31
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 39, 31]
+Wed 2025-05-14 01:39:31 Temp: 24.41C
+
+bme280.values = ('24.46C', '1004.11hPa', '41.19%')
+date    = 2025-05-14
+time    = 01:39:32
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 39, 32]
+Wed 2025-05-14 01:39:32 Temp: 24.41C
+
+bme280.values = ('24.47C', '1004.14hPa', '41.18%')
+date    = 2025-05-14
+time    = 01:39:33
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 39, 33]
+Wed 2025-05-14 01:39:33 Temp: 24.41C
+
+bme280.values = ('24.47C', '1004.10hPa', '41.17%')
+date    = 2025-05-14
+time    = 01:39:34
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 39, 34]
+Wed 2025-05-14 01:39:34 Temp: 24.41C
+
+[...]
+
+bme280.values = ('24.28C', '1004.12hPa', '41.64%')
+date    = 2025-05-14
+time    = 01:46:08
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 46, 8]
+Wed 2025-05-14 01:46:08 Press:1004.12hPa
+-------------------------------------------------------------------
+handle_rx_buf(): unixtime data received via UART
+handle_rx_buf(): rtc updated from ntp: [2025, 5, 14, 2, 1, 46, 8]
+-------------------------------------------------------------------
+
+bme280.values = ('24.28C', '1004.10hPa', '41.63%')
+date    = 2025-05-14
+time    = 01:46:09
+weekday = Wed
+yearday = 134
+dtToStr(): rtc.DateTime() = [2025, 5, 14, 2, 1, 46, 9]
+Wed 2025-05-14 01:46:09 Press:1004.12hPa
+
+
+----------------------------
+Sender device:
+board: Pimoroni Pico Plus 2 
+----------------------------
+PuTTY output:
+
+main(): unixtime send interval = 1 minute(s)
+Waiting for connection...
+wlan connected to: "_______________"
+IP address = "192.168._.___"
+
+
+datetime from NTP server = Wed 2025-05-14T00:42:32Z yday 134
+unixtime 1747183352, tx_buf = b'h#\xe6\xf8', list(tx_buf) = [104, 35, 230, 248] sent via UART
+
+
+datetime from NTP server = Wed 2025-05-14T00:46:08Z yday 134
+unixtime 1747183568, tx_buf = b'h#\xe7\xd0', list(tx_buf) = [104, 35, 231, 208] sent via UART
+
+
