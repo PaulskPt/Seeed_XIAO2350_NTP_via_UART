@@ -1,0 +1,41 @@
+2025-05-15 14h00 utc+1
+
+board: Seeed XIAO RP2530
+on top of a Seeed XIAO Expansion board base
+
+UART connection to a Pimoroni Pico Plus2 board with Pimoroni RM2 module connected.
+
+IDE: Thonny
+
+
+Shell output:
+
+
+
+bme280.values = ('24.37C', '1007.97hPa', '36.58%')
+date    = 2025-05-15
+time    = 14:00:29
+weekday = 
+yearday = 0
+dtToStr(): rtc.DateTime() = [2025, 5, 15, 3, 14, 0, 29]
+Thu 2025-05-15 14:00:29 Temp: 24.37C
+---------------------------------------------------------------------------------------
+handle_rx_buf(): unixtime data received via UART
+handle_rx_buf(): rtc updated from ntp: [2025, 5, 15, 3, 14, 0, 29] = (UTC + 1 hour(s))
+---------------------------------------------------------------------------------------
+
+bme280.values = ('24.37C', '1007.92hPa', '36.56%')
+date    = 2025-05-15
+time    = 14:00:30
+weekday = Thu
+yearday = 135
+dtToStr(): rtc.DateTime() = [2025, 5, 15, 3, 14, 0, 30]
+Thu 2025-05-15 14:00:30 Temp: 24.37C
+
+bme280.values = ('24.37C', '1007.96hPa', '36.46%')
+date    = 2025-05-15
+time    = 14:00:31
+weekday = Thu
+yearday = 135
+dtToStr(): rtc.DateTime() = [2025, 5, 15, 3, 14, 0, 31]
+Thu 2025-05-15 14:00:31 Temp: 24.37C
