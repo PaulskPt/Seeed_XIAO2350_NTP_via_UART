@@ -56,6 +56,10 @@ In the global variables section of the script: ```main.py```
     tz_offset = int(TIMEZONE_OFFSET)  # convert string to an integer value
 
 ```
+In function main() the following line defines the NTP update interval:
+```
+    133  interval_t = 5 * 60 * 1000 # 5 minutes
+````
 
 # THE RECEIVING DEVICE
 
